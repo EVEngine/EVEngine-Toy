@@ -56,6 +56,7 @@ try {
     server.listen(port, '127.0.0.1', () => emit({ url: `http://127.0.0.1:${port}/toy/local/index.html`, isolationHeaders: false }));
     server.on('error', error => { console.error(error.message); process.exitCode = 1; });
   } else {
+    console.log('eve-toy build --game <dir> --engine <src> --emsdk <sdk> --cmake <exe> --build <cache> --output <dir> [--profile minimal|web] [--threads true|false] [--jobs N]');
     console.log('eve-toy probe <new-dir> | doctor <package-dir> | pack <engine-output-dir> <new-dir> | serve <package-dir> [port] | preview <package-dir> [metadata flags] | toy-help');
     if (command && command !== '--help') process.exitCode = 2;
   }

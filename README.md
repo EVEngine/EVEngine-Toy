@@ -6,7 +6,7 @@
 
 ## 一条命令导出游戏
 
-准备 Node.js 22+、PATH 中的 `eve`、EVEngine 源码及其子模块、emsdk，以及 CMake 3.29.x。浏览器运行时尚无官方预编译 SDK，因此首次导出会构建一次完整引擎；后续复用此目录中的构建缓存。
+准备 Node.js 22+、PATH 中的 `eve`、EVEngine 源码及其子模块、emsdk（本次验证为 6.0.7，须提供 emdawnwebgpu port），以及 CMake 3.29.x。浏览器运行时尚无官方预编译 SDK，因此首次导出会构建一次完整引擎；后续复用此目录中的构建缓存。
 
 ```powershell
 node bin/eve-toy.mjs build `
