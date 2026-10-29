@@ -60,3 +60,12 @@ test('overlapping paths are rejected in both directions', () => {
   for (const [a,b] of [['a','a'], ['a','a/b'], ['a/b','a']]) assert.throws(() => disjoint(a,b));
   assert.doesNotThrow(() => disjoint('a','b'));
 });
+
+test('pack creates missing output parents without overwriting existing artifacts', async t => {
+  const { input, parent } = await fixture(t);
+  await runtime(input);
+  const output = path.join(parent, 'dist', 'nested', 'game');
+  assert.equal((await exportPackage(input, output)).ok, true);
+  assert.ok((await readdir(output)).includes('index.html'));
+  await assert.rejects(exportPackage(input, output), /already exists/);
+});

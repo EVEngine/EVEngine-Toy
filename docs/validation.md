@@ -37,3 +37,20 @@
 - 本机未安装官方 toy CLI，未运行真实预览上传；CLI 参数发现及 preview 的无提交约束由注入执行器契约测试覆盖。
 
 上述都是本地证据；没有远端 CI 成功或 Toy 发布成功的声明。架构规则中适用了 Result 检查、异步拥有数据、VM 线程边界、版本化协议、provider-present/absent、失败不发布半成品和第三方源码归属规则。没有新增 ECS、公共持久存档或引擎模块边界；无规则豁免。
+
+## 实际打包试验（2026-10-29）
+
+重新执行真实 Emscripten 链接，使用 --preload-file 将 examples/sdk-smoke 挂载为 /game，生成 eve.html、eve.js、eve.wasm、eve.data，再执行：
+
+```
+node bin/eve-toy.mjs pack build/shell-smoke dist/package-trial
+node bin/eve-toy.mjs doctor dist/package-trial
+```
+
+实测发现并修复输出父目录不存在时的 ENOENT，加入回归测试后 npm test 15/15 通过。打包检查 0 errors；9 文件，共 169047 bytes。使用标准 ZIP 创建工具生成 dist/evengine-toy-package-trial.zip，49097 bytes；ZIP 根包含 index.html，没有额外包裹目录，CRC 检查通过。
+
+ZIP SHA256：C0527688C782E5D8D533F942EFAA7E29928B32B3FB3642C26F73AEBABE815DBA。
+
+通过本地 /toy/local/ 子路径请求全部 9 个文件，均为 HTTP 200；WASM MIME 为 application/wasm，WebAssembly.validate 通过。测试 HTTP 服务已停止。
+
+这是最小 Emscripten 打包验证：main.cpp 只返回 0，SDK smoke 脚本真实预加载，但没有链接完整 EVEngine，因此不执行这些脚本，不是可玩的游戏。当前未找到完整引擎浏览器产物。保留了线程依赖与实际 Toy 容器未验证警告；本次没有上传。
