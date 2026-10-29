@@ -5,6 +5,7 @@ import { readFile, lstat } from 'node:fs/promises';
 import path from 'node:path';
 import { doctor, exportPackage, exportProbe } from '../lib/package.mjs';
 import { preview } from '../lib/official.mjs';
+import { buildGame, parseBuildOptions } from '../lib/build.mjs';
 
 const [command, input, output, ...extra] = process.argv.slice(2);
 function emit(value) { console.log(JSON.stringify(value, null, 2)); }
@@ -14,7 +15,9 @@ function toyHelp() {
   return JSON.parse(result.stdout);
 }
 try {
-  if (command === 'doctor' && input && !output) {
+  if (command === 'build') {
+    emit(await buildGame(parseBuildOptions(process.argv.slice(3))));
+  } else if (command === 'doctor' && input && !output) {
     const report = await doctor(path.resolve(input)); emit(report); process.exitCode = report.ok ? 0 : 1;
   } else if (command === 'pack' && input && output && !extra.length) {
     emit(await exportPackage(path.resolve(input), path.resolve(output)));

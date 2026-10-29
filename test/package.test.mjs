@@ -57,7 +57,7 @@ test('doctor blocks root URLs, missing resources, filtered files and oversized e
   assert.ok(report.errors.some(item => item.includes('1 MiB')));
 });
 test('overlapping paths are rejected in both directions', () => {
-  for (const [a,b] of [['a','a'], ['a','a/b'], ['a/b','a']]) assert.throws(() => disjoint(a,b));
+  for (const [a,b] of [['a','a'], ['a','a/b'], ['a/b','a'], ['a','a/..nested']]) assert.throws(() => disjoint(a,b));
   assert.doesNotThrow(() => disjoint('a','b'));
 });
 
@@ -68,4 +68,23 @@ test('pack creates missing output parents without overwriting existing artifacts
   assert.equal((await exportPackage(input, output)).ok, true);
   assert.ok((await readdir(output)).includes('index.html'));
   await assert.rejects(exportPackage(input, output), /already exists/);
+});
+
+test('thread requirements are taken from the generated browser shell', async t => {
+  const { input } = await fixture(t);
+  await writeFile(path.join(input, 'index.html'), '<body data-requires-threads="false"><script src="./eve.js"></script></body>');
+  await writeFile(path.join(input, 'eve.js'), '// pthread symbol names can occur in single-threaded syslibs');
+  let report = await doctor(input);
+  assert.equal(report.requiresThreads, false);
+  assert.ok(!report.warnings.some(item=>item.startsWith('Thread dependency')));
+  await writeFile(path.join(input, 'index.html'), '<body data-requires-threads="true"><script src="./eve.js"></script></body>');
+  report = await doctor(input);
+  assert.equal(report.requiresThreads, true);
+  assert.ok(report.warnings.some(item=>item.startsWith('Thread dependency')));
+});
+
+test('Emscripten-minified unquoted thread attributes retain their meaning',async t=>{
+  const {input}=await fixture(t);
+  await writeFile(path.join(input,'index.html'),'<body data-requires-threads=false>');
+  assert.equal((await doctor(input)).requiresThreads,false);
 });
