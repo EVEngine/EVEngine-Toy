@@ -5,13 +5,13 @@ import os from 'node:os';
 import path from 'node:path';
 import { previewArguments, preview } from '../lib/official.mjs';
 import { exportProbe } from '../lib/package.mjs';
-const help = { commands:[{ path:['create'], flags:[{ name:'name', type:'string' },
-  { name:'visibility', type:'string', choices:['public','private'] }, {name:'yes',type:'bool'}] }] };
+const help = { commands:[{ path:['create'], flags:[{ name:'title', type:'string' },
+  { name:'visibility', type:'string', choices:['public','link-only'] }, {name:'yes',type:'bool'}] }] };
 
 test('preview derives metadata flags from installed CLI, fixes JSON and never submits', () => {
-  const args = previewArguments(help, 'game', ['--name','A game','--visibility=private']);
-  assert.deepEqual(args, ['create','game','--json','--name=A game','--visibility=private']);
-  for (const flags of [['--yes'],['--yes=true'],['--json=false'],['--unknown=x'],['--name'],['--visibility=invalid']])
+  const args = previewArguments(help, 'game', ['--title','A game','--visibility=link-only']);
+  assert.deepEqual(args, ['create','game','--json','--title=A game','--visibility=link-only']);
+  for (const flags of [['--yes'],['--yes=true'],['--json=false'],['--unknown=x'],['--title'],['--visibility=invalid']])
     assert.throws(() => previewArguments(help, 'game', flags));
   assert.throws(() => previewArguments({}, 'game'));
 });
@@ -20,7 +20,7 @@ test('preview prechecks package and executes only help then create without yes',
   t.after(()=>rm(parent,{recursive:true,force:true}));
   const directory = path.join(parent, 'probe'); await exportProbe(directory);
   const calls = [];
-  const result = await preview(directory, ['--name=Probe'], args => {
+  const result = await preview(directory, ['--title=Probe'], args => {
     calls.push(args); return calls.length === 1 ? help : { preview_url:'https://example.invalid/preview' };
   });
   assert.equal(result.submitted, false);

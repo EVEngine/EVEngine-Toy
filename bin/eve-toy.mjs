@@ -1,19 +1,14 @@
 #!/usr/bin/env node
-import { spawnSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { readFile, lstat } from 'node:fs/promises';
 import path from 'node:path';
 import { doctor, exportPackage, exportProbe } from '../lib/package.mjs';
-import { preview } from '../lib/official.mjs';
+import { preview, officialHelp } from '../lib/official.mjs';
 import { buildGame, parseBuildOptions } from '../lib/build.mjs';
 
 const [command, input, output, ...extra] = process.argv.slice(2);
 function emit(value) { console.log(JSON.stringify(value, null, 2)); }
-function toyHelp() {
-  const result = spawnSync('toy', ['--help-json'], { encoding: 'utf8', shell: false });
-  if (result.error || result.status !== 0) throw new Error('Official toy CLI is unavailable; install it from bilibili/toy instructions');
-  return JSON.parse(result.stdout);
-}
+
 try {
   if (command === 'build') {
     emit(await buildGame(parseBuildOptions(process.argv.slice(3))));
@@ -26,7 +21,7 @@ try {
   } else if (command === 'preview' && input) {
     emit(await preview(path.resolve(input), [output, ...extra].filter(value => value !== undefined)));
   } else if (command === 'toy-help' && !input) {
-    emit(toyHelp());
+    emit(officialHelp());
   } else if (command === 'serve' && input && !extra.length) {
     const directory = path.resolve(input);
     const port = Number(output ?? 8090);

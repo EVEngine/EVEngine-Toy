@@ -59,3 +59,18 @@ Headless Edge 从 `/toy/local/` 子路径运行，服务器不提供 COOP/COEP�
 - [GPUCanvasContext.configure](https://developer.mozilla.org/en-US/docs/Web/API/GPUCanvasContext/configure)
 
 接口使用 common Value/Result 的标准投影；Promise 只持有复制的数据，不回调 VM；终态 token 单次消费。游戏包仍由 eve 拥有格式；发布目录检查成功才发布。未新增 ECS、引擎模块声明或跨域生命周期接口，无架构规则豁免。
+
+### Bilibili hosted test, 2026-10-30
+
+Official Toy CLI v0.6.4 successfully uploaded dist/evengine-toy-game.zip
+(28,628,858 bytes; SHA256 5e866c0231c652f187f6e6d10a0af029301084280cc4c714b31dcc7aebcf9b24).
+The real hosted canvas rendered the blue player, red obstacle and ground line.
+WebGPU device creation and the Toy SDK capability request succeeded without
+cross-origin isolation or SharedArrayBuffer. Engine logs confirmed first present,
+engine-owned PNG capture and collision processing. Hosted keyboard movement,
+App WebView and authenticated storage/rank methods have not been verified.
+
+Toy 49552392458240 was submitted with LINK_ONLY visibility; official mylist
+confirmed auditing. Submitted preview:
+https://www.bilibili.com/toy/preview/author_xA6tHr4P/index.html .
+This proves hosted rendering and submission, not review approval.

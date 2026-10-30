@@ -84,8 +84,10 @@ if (packet.state == "succeeded") {
 先安装并登录 B 站官方 Toy CLI。发布命令参数以已安装 CLI 的实时帮助为准：
 
 ```powershell
+# 如果 toy 不在 PATH，可指定官方可执行文件：
+$env:TOY_CLI = "C:/path/to/toy.exe"
 node bin/eve-toy.mjs toy-help
-node bin/eve-toy.mjs preview dist/toy-game --name=MyGame
+node bin/eve-toy.mjs preview dist/toy-game --title=MyGame
 ```
 
 preview 先运行预检，再从 `toy --help-json` 验证 create 参数，最后调用官方 `toy create` 创建预览，强制 JSON 且不带 --yes。检查线上游戏和 App 环境后，再通过官方工具提交审核。构建、测试和打包不会自行上传内容。
