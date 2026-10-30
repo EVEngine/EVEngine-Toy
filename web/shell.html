@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>EVEngine · bilibili Toy</title>
+  <link rel="stylesheet" href="./toy.css">
+  <script src="https://s1.hdslb.com/bfs/seed/toy/app/sdk/toy-sdk.js"></script>
+  <script src="./toy-probe.js"></script>
+</head>
+<body data-requires-threads="@EVE_TOY_REQUIRES_THREADS_JS@">
+  <canvas id="canvas" tabindex="0"></canvas>
+  <p id="status" role="status">检查 WebGPU 环境…</p>
+  <details><summary>环境报告</summary><pre id="report"></pre></details>
+  <script>
+    var Module = {
+      canvas: document.getElementById('canvas'),
+      onAbort: function (reason) { document.getElementById('status').textContent = '游戏启动失败：' + reason; }
+    };
+    window.eveEngineReady = function () {
+      document.getElementById('status').textContent = '游戏就绪';
+      Module.canvas.focus();
+    };
+  </script>
+  <template id="engine-entry">{{{ SCRIPT }}}</template>
+  <script src="./toy-boot.js"></script>
+</body>
+</html>
